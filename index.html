@@ -1,0 +1,178 @@
+```html
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>GLOBAL CALLING DASHBOARD</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+color:white;
+background:#05080d url("https://eoimages.gsfc.nasa.gov/images/imagerecords/79000/79765/dnb_land_ocean_ice.2012.3600x1800.jpg") center/cover;
+}
+
+.header{
+text-align:center;
+font-size:34px;
+padding:20px;
+background:rgba(0,0,0,0.8);
+letter-spacing:2px;
+}
+
+.best{
+text-align:center;
+font-size:18px;
+padding:12px;
+background:#111;
+color:#3cff6b;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:20px;
+padding:30px;
+}
+
+.clock{
+background:rgba(0,0,0,0.75);
+padding:20px;
+border-radius:12px;
+text-align:center;
+}
+
+.region{
+font-size:16px;
+color:#bbb;
+}
+
+.time{
+font-size:36px;
+margin-top:6px;
+font-weight:bold;
+}
+
+.status{
+margin-top:6px;
+font-size:13px;
+font-weight:bold;
+}
+
+.good{color:#3cff6b;}
+.ok{color:#ffc857;}
+.bad{color:#ff5c5c;}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+GLOBAL CALLING DASHBOARD
+</div>
+
+<div class="best" id="bestMarkets">
+Finding best markets to call...
+</div>
+
+<div class="grid" id="clocks"></div>
+
+<script>
+
+const zones=[
+
+["UK","Europe/London"],
+["Nigeria / Ghana / Gambia","Africa/Lagos"],
+["Kenya / Uganda / Tanzania / Rwanda","Africa/Nairobi"],
+["South Africa","Africa/Johannesburg"],
+
+["UAE","Asia/Dubai"],
+["Saudi Arabia / Qatar","Asia/Riyadh"],
+
+["India","Asia/Kolkata"],
+["Pakistan","Asia/Karachi"],
+["Bangladesh","Asia/Dhaka"],
+
+["Singapore / Malaysia","Asia/Singapore"],
+["Thailand / Vietnam","Asia/Bangkok"],
+
+["Hong Kong","Asia/Hong_Kong"],
+["Japan / South Korea","Asia/Tokyo"],
+
+["USA East","America/New_York"],
+["USA West","America/Los_Angeles"],
+
+["Australia","Australia/Sydney"]
+
+];
+
+const container=document.getElementById("clocks");
+
+zones.forEach(z=>{
+
+let div=document.createElement("div");
+
+div.className="clock";
+
+div.innerHTML=`
+<div class="region">${z[0]}</div>
+<div class="time" id="${z[0]}"></div>
+<div class="status" id="${z[0]}status"></div>
+`;
+
+container.appendChild(div);
+
+});
+
+function getStatus(hour){
+
+if(hour>=9 && hour<=18) return ["GOOD CALL TIME","good"];
+if(hour>=7 && hour<9) return ["EARLY","ok"];
+if(hour>18 && hour<=21) return ["LATE","ok"];
+
+return ["SLEEPING","bad"];
+
+}
+
+function update(){
+
+let best=[];
+
+zones.forEach(z=>{
+
+let now=new Date().toLocaleString("en-US",{timeZone:z[1]});
+let d=new Date(now);
+
+let hour=d.getHours();
+let time=d.toLocaleTimeString("en-US");
+
+let s=getStatus(hour);
+
+document.getElementById(z[0]).innerHTML=time;
+
+let stat=document.getElementById(z[0]+"status");
+
+stat.innerHTML=s[0];
+stat.className="status "+s[1];
+
+if(s[1]=="good") best.push(z[0]);
+
+});
+
+document.getElementById("bestMarkets").innerHTML=
+"📞 BEST MARKETS TO CALL NOW → "+best.join("  |  ");
+
+}
+
+setInterval(update,1000);
+update();
+
+</script>
+
+</body>
+</html>
+```
