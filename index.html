@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -79,6 +78,10 @@ LSBF CALLING DASHBOARD
 Finding best markets to call...
 </div>
 
+<div class="best" id="nextMarket">
+Next market opening: calculating...
+</div>
+
 <div class="grid" id="clocks"></div>
 
 <script>
@@ -138,6 +141,54 @@ return ["SLEEPING","bad"];
 
 }
 
+function nextOpening(){
+
+let nextMarket=null;
+let smallestDiff=999999999;
+
+zones.forEach(z=>{
+
+let now=new Date().toLocaleString("en-US",{timeZone:z[1]});
+let d=new Date(now);
+
+let hour=d.getHours();
+
+if(hour<11){
+
+let open=new Date(d);
+open.setHours(11,0,0,0);
+
+let diff=open-d;
+
+if(diff<smallestDiff){
+
+smallestDiff=diff;
+nextMarket=z[0];
+
+}
+
+}
+
+});
+
+if(nextMarket){
+
+let minutes=Math.floor(smallestDiff/60000);
+let hrs=Math.floor(minutes/60);
+minutes=minutes%60;
+
+document.getElementById("nextMarket").innerHTML=
+"⏰ NEXT MARKET OPENING → "+nextMarket+" in "+hrs+"h "+minutes+"m";
+
+}else{
+
+document.getElementById("nextMarket").innerHTML=
+"All markets currently open";
+
+}
+
+}
+
 function update(){
 
 let best=[];
@@ -166,6 +217,8 @@ if(s[1]=="good") best.push(z[0]);
 document.getElementById("bestMarkets").innerHTML=
 "📞 BEST MARKETS TO CALL NOW → "+best.join("  |  ");
 
+nextOpening();
+
 }
 
 setInterval(update,1000);
@@ -175,4 +228,3 @@ update();
 
 </body>
 </html>
-```
