@@ -64,6 +64,29 @@ font-weight:bold;
 .ok{color:#ffc857;}
 .bad{color:#ff5c5c;}
 
+.newsTicker{
+position:fixed;
+bottom:0;
+width:100%;
+background:#000;
+color:#3cff6b;
+font-size:14px;
+padding:8px 0;
+overflow:hidden;
+white-space:nowrap;
+}
+
+#newsContent{
+display:inline-block;
+padding-left:100%;
+animation:scrollNews 90s linear infinite;
+}
+
+@keyframes scrollNews{
+0%{transform:translateX(0);}
+100%{transform:translateX(-100%);}
+}
+
 </style>
 
 </head>
@@ -83,6 +106,12 @@ Next market opening: calculating...
 </div>
 
 <div class="grid" id="clocks"></div>
+
+<div class="newsTicker">
+<div id="newsContent">
+🌍 Education News: Loading latest global education updates...
+</div>
+</div>
 
 <script>
 
@@ -115,7 +144,7 @@ const zones=[
 
 const container=document.getElementById("clocks");
 
-zones.forEach(z=>{
+zones.forEach((z,i)=>{
 
 let div=document.createElement("div");
 
@@ -123,8 +152,8 @@ div.className="clock";
 
 div.innerHTML=`
 <div class="region">${z[0]}</div>
-<div class="time" id="${z[0]}"></div>
-<div class="status" id="${z[0]}status"></div>
+<div class="time" id="t${i}"></div>
+<div class="status" id="s${i}"></div>
 `;
 
 container.appendChild(div);
@@ -193,7 +222,7 @@ function update(){
 
 let best=[];
 
-zones.forEach(z=>{
+zones.forEach((z,i)=>{
 
 let now=new Date().toLocaleString("en-US",{timeZone:z[1]});
 let d=new Date(now);
@@ -203,9 +232,9 @@ let time=d.toLocaleTimeString("en-US");
 
 let s=getStatus(hour);
 
-document.getElementById(z[0]).innerHTML=time;
+document.getElementById("t"+i).innerHTML=time;
 
-let stat=document.getElementById(z[0]+"status");
+let stat=document.getElementById("s"+i);
 
 stat.innerHTML=s[0];
 stat.className="status "+s[1];
@@ -215,14 +244,41 @@ if(s[1]=="good") best.push(z[0]);
 });
 
 document.getElementById("bestMarkets").innerHTML=
-"📞 BEST MARKETS TO CALL NOW → "+best.join("  |  ");
+"📞 BEST MARKETS TO CALL NOW → "+(best.length?best.join(" | "):"None");
 
 nextOpening();
 
 }
 
+async function loadEducationNews(){
+
+try{
+
+let feed="https://api.rss2json.com/v1/api.json?rss_url=https://monitor.icef.com/feed/";
+
+let res=await fetch(feed);
+let data=await res.json();
+
+let headlines=data.items.slice(0,6).map(n=>n.title);
+
+document.getElementById("newsContent").innerHTML=
+"🌍 GLOBAL EDUCATION NEWS → "+headlines.join(" | ");
+
+}
+catch(e){
+
+document.getElementById("newsContent").innerHTML=
+"🌍 Education News unavailable";
+
+}
+
+}
+
 setInterval(update,1000);
 update();
+
+loadEducationNews();
+setInterval(loadEducationNews,3600000);
 
 </script>
 
