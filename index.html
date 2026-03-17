@@ -21,6 +21,11 @@ background:rgba(0,0,0,0.8);
 letter-spacing:2px;
 }
 
+.opening{ color:#3cff6b; }
+.closing-green{ color:#3cff6b; }
+.closing-yellow{ color:#ffc857; }
+.closing-red{ color:#ff5c5c; }
+
 .best{
 text-align:center;
 font-size:18px;
@@ -81,6 +86,7 @@ display:inline-block;
 padding-left:100%;
 animation:scrollNews 90s linear infinite;
 }
+
 .newsTicker:hover #newsContent{
 animation-play-state:paused;
 }
@@ -106,6 +112,10 @@ Finding best markets to call...
 
 <div class="best" id="nextMarket">
 Next market opening: calculating...
+</div>
+
+<div class="best" id="closingMarket">
+Next market closing: calculating...
 </div>
 
 <div class="grid" id="clocks"></div>
@@ -210,12 +220,64 @@ let hrs=Math.floor(minutes/60);
 minutes=minutes%60;
 
 document.getElementById("nextMarket").innerHTML=
-"⏰ NEXT MARKET OPENING → "+nextMarket+" in "+hrs+"h "+minutes+"m";
+"<span class='opening'>⏰ NEXT MARKET OPENING → "+nextMarket+" in "+hrs+"h "+minutes+"m</span>";
 
 }else{
 
 document.getElementById("nextMarket").innerHTML=
 "All markets currently open";
+
+}
+
+}
+
+function nextClosing(){
+
+let nextMarket=null;
+let smallestDiff=999999999;
+
+zones.forEach(z=>{
+
+let now=new Date().toLocaleString("en-US",{timeZone:z[1]});
+let d=new Date(now);
+
+let hour=d.getHours();
+
+if(hour>=11 && hour<21){
+
+let close=new Date(d);
+close.setHours(18,0,0,0);
+
+let diff=close-d;
+
+if(diff>0 && diff<smallestDiff){
+
+smallestDiff=diff;
+nextMarket=z[0];
+
+}
+
+}
+
+});
+
+if(nextMarket){
+
+let minutes=Math.floor(smallestDiff/60000);
+let hrs=Math.floor(minutes/60);
+minutes=minutes%60;
+
+let colorClass="closing-green";
+if(hrs<1) colorClass="closing-red";
+else if(hrs<3) colorClass="closing-yellow";
+
+document.getElementById("closingMarket").innerHTML=
+"<span class='"+colorClass+"'>⏳ NEXT MARKET CLOSING → "+nextMarket+" in "+hrs+"h "+minutes+"m</span>";
+
+}else{
+
+document.getElementById("closingMarket").innerHTML=
+"All markets currently closed";
 
 }
 
@@ -250,6 +312,7 @@ document.getElementById("bestMarkets").innerHTML=
 "📞 BEST MARKETS TO CALL NOW → "+(best.length?best.join(" | "):"None");
 
 nextOpening();
+nextClosing();
 
 }
 
