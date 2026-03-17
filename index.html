@@ -130,29 +130,34 @@ Next market closing: calculating...
 
 const zones=[
 
-["UK","Europe/London"],
-["Spain / Germany","Europe/Berlin"],
-["Nigeria / Ghana / Gambia","Africa/Lagos"],
-["Kenya / Uganda / Tanzania / Rwanda","Africa/Nairobi"],
-["Zimbabwe / Zambia / Botswana / South Africa","Africa/Harare"],
+["UK / Ireland","Europe/London"],
+["Europe Core (Germany, Italy, Spain)","Europe/Berlin"],
 
-["UAE","Asia/Dubai"],
-["Saudi Arabia / Qatar","Asia/Riyadh"],
+// AFRICA (VERY IMPORTANT)
+["West Africa (Nigeria, Ghana)","Africa/Lagos"],
+["East Africa (Kenya, Uganda, Tanzania)","Africa/Nairobi"],
+["Southern Africa (South Africa, Zimbabwe)","Africa/Johannesburg"],
 
-["India/Pakistan","Asia/Kolkata"],
-["Bangladesh","Asia/Dhaka"],
+// MIDDLE EAST
+["Middle East (UAE, Saudi, Qatar)","Asia/Dubai"],
 
-["Singapore / Malaysia","Asia/Singapore"],
-["Thailand / Vietnam","Asia/Bangkok"],
+// SOUTH ASIA
+["India","Asia/Kolkata"],
+["Pakistan / Bangladesh","Asia/Karachi"],
 
-["Hong Kong","Asia/Hong_Kong"],
-["Japan / South Korea","Asia/Tokyo"],
+// SOUTH EAST ASIA
+["SE Asia (Malaysia, Singapore)","Asia/Singapore"],
 
+// EAST ASIA
+["East Asia (HK, Japan, Korea)","Asia/Tokyo"],
+
+// AMERICAS
 ["USA East","America/New_York"],
 ["USA West","America/Los_Angeles"],
+["Caribbean (Jamaica, Guyana)","America/Jamaica"],
 
+// OCEANIA
 ["Australia","Australia/Sydney"]
-
 ];
 
 const container=document.getElementById("clocks");
